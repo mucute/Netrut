@@ -1,9 +1,16 @@
+buildscript {
+    dependencies {
+        classpath("com.github.dcendents:android-maven-gradle-plugin:1.4.1")
+    }
+}
 plugins {
+
     id("kotlin")
+//    id("com.github.dcendents.android-maven")
     kotlin("jvm") version "1.7.10"
 }
 
-group = "org.muc"
+group = "com.github.mucute"
 version = "1.0-SNAPSHOT"
 
 repositories {
