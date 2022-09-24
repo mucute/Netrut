@@ -11,7 +11,7 @@ import kotlin.Throws
  */
 class MethodProxy<T>(private val url: String) : InvocationHandler {
     @Throws(Throwable::class)
-    override fun invoke(proxy: Any, method: Method, args: Array<Any>): Any {
+    override fun invoke(proxy: Any, method: Method, args: Array<Any>?): Any {
         return DataBuilder<T>()
             .setMethod(method)
             .setArguments(args)

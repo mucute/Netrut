@@ -2,6 +2,7 @@ package com.muc.netrut.builder
 
 import com.muc.netrut.annotation.Param
 import com.muc.netrut.core.Data
+import com.muc.netrut.core.ParamChecker
 import com.muc.netrut.core.ParamMap
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
@@ -9,7 +10,7 @@ import java.lang.reflect.ParameterizedType
 class DataBuilder<T> {
 
     private lateinit var method: Method
-    private lateinit var arguments: Array<Any>
+    private var arguments: Array<Any>? = null
     private lateinit var baseUrl: String
 
     fun setBaseUrl(baseUrl: String): DataBuilder<T> {
@@ -22,7 +23,7 @@ class DataBuilder<T> {
         return this
     }
 
-    fun setArguments(rgs: Array<Any>): DataBuilder<T> {
+    fun setArguments(rgs: Array<Any>?): DataBuilder<T> {
         this.arguments = rgs
         return this
     }
@@ -30,17 +31,27 @@ class DataBuilder<T> {
     fun build(): Data<T> {
         val type = (method.genericReturnType as ParameterizedType).actualTypeArguments[0]
         val clazz = type as Class<*>
+
+        if (ParamChecker.existsFileType(method.parameterTypes)){
+            println("FIle")
+        }
         val paramBuilder = ParamMap().apply {
-            if (arguments[0] is Map<*, *>) {
-                val map = arguments[0] as Map<*, *>
+            if (arguments == null) {
+                return@apply
+            }
+            if (arguments?.get(0) is Map<*, *>) {
+                val map = arguments!![0] as Map<*, *>
                 map.forEach { (any, u) ->
                     add(any.toString(), u.toString())
                 }
             } else {
-                for (index in arguments.indices) {
+                for (index in arguments?.indices!!) {
                     if (method.parameters[index].isAnnotationPresent(Param::class.java)) {
-                        add(method.parameters[index].getAnnotation(Param::class.java).name, arguments[index].toString())
-                    } else add(method.parameters[index].name.toString(), arguments[index].toString())
+                        add(
+                            method.parameters[index].getAnnotation(Param::class.java).name,
+                            arguments!![index].toString()
+                        )
+                    } else add(method.parameters[index].name.toString(), arguments!![index].toString())
                 }
             }
         }

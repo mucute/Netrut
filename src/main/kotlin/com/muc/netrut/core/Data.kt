@@ -17,6 +17,7 @@ class Data<T>(
     private var error: ((IOException) -> Unit)? = null
 
     fun success(res: (T) -> Unit): Data<T> {
+
         val builder: Request.Builder = Request.Builder().apply {
             when {
                 method.isAnnotationPresent(Get::class.java) -> {
@@ -34,7 +35,7 @@ class Data<T>(
                 }
             }
         }
-        var netrutExecute = NetrutExecute()
+        val netrutExecute = NetrutExecute()
         netrutExecute.request = builder.build()
         netrutExecute.success = {
             res.invoke(
